@@ -75,8 +75,6 @@ class RasterizePointsXYsBlending(nn.Module):
         # src = torch.cat((src, self.default_feature.repeat(bs, 1, 1)), 2)
 
         radius = float(self.radius) / float(image_size) * 2.0
-        params = compositing.CompositeParams(radius=radius)
-
 
         pts3D = Pointclouds(points=pts3D, features=src.permute(0,2,1))
         points_idx, _, dist = rasterize_points(
@@ -102,21 +100,18 @@ class RasterizePointsXYsBlending(nn.Module):
                 points_idx.permute(0, 3, 1, 2).long(),
                 alphas,
                 pts3D.features_packed().permute(1,0),
-                params,
             )
         elif self.opts.accumulation == 'wsum':
             transformed_src_alphas = compositing.weighted_sum(
                 points_idx.permute(0, 3, 1, 2).long(),
                 alphas,
                 pts3D.features_packed().permute(1,0),
-                params,
             )
         elif self.opts.accumulation == 'wsumnorm':
             transformed_src_alphas = compositing.weighted_sum_norm(
                 points_idx.permute(0, 3, 1, 2).long(),
                 alphas,
                 pts3D.features_packed().permute(1,0),
-                params,
             )
 
         return transformed_src_alphas
