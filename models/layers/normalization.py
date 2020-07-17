@@ -137,19 +137,20 @@ class bn(nn.Module):
                 x, gain, bias, return_mean_var=True, eps=self.eps
             )
             # If accumulating standing stats, increment them
-            if self.accumulate_standing:
-                self.stored_mean[:] = self.stored_mean + mean.data
-                self.stored_var[:] = self.stored_var + var.data
-                self.accumulation_counter += 1.0
-            # If not accumulating standing stats, take running averages
-            else:
-                self.stored_mean[:] = (
-                    self.stored_mean * (1 - self.momentum)
-                    + mean * self.momentum
-                )
-                self.stored_var[:] = (
-                    self.stored_var * (1 - self.momentum) + var * self.momentum
-                )
+            with torch.no_grad():
+                if self.accumulate_standing:
+                    self.stored_mean[:] = self.stored_mean + mean.data
+                    self.stored_var[:] = self.stored_var + var.data
+                    self.accumulation_counter += 1.0
+                # If not accumulating standing stats, take running averages
+                else:
+                    self.stored_mean[:] = (
+                        self.stored_mean * (1 - self.momentum)
+                        + mean * self.momentum
+                    )
+                    self.stored_var[:] = (
+                        self.stored_var * (1 - self.momentum) + var * self.momentum
+                    )
             return out
         # If not in training mode, use the stored statistics
         else:
