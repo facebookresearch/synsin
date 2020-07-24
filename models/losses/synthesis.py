@@ -38,6 +38,8 @@ class SynthesisLoss(nn.Module):
         if torch.cuda.is_available():
             return loss.cuda()
 
+        return loss
+
     def forward(self, pred_img, gt_img):
         losses = [loss(pred_img, gt_img) for loss in self.losses]
 
