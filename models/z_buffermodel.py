@@ -154,6 +154,10 @@ class ZbufferModelPts(nn.Module):
             identity = (
                 torch.eye(4).unsqueeze(0).repeat(input_img.size(0), 1, 1).cuda()
             )
+        else:
+            identity = (
+                torch.eye(4).unsqueeze(0).repeat(input_img.size(0), 1, 1)
+            )
 
         fs = self.encoder(input_img)
         regressed_pts = (
