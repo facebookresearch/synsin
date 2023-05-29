@@ -61,7 +61,7 @@ class KITTIDataLoader(data.Dataset):
         RB = ROT.from_euler('xyz',poseB[0:3]).as_dcm()
         TA = poseA[3:].reshape(3, 1)
         RA = ROT.from_euler('xyz',poseA[0:3]).as_dcm()
-        T = RA.T.dot(TB-TA)/50.
+        T = RA.T.dot(TB-TA)
 
         mat = np.block(
             [ [RA.T@RB, T],
@@ -79,7 +79,7 @@ class KITTIDataLoader(data.Dataset):
                  0., 0., 0., 1.]).reshape((4, 4)).astype(np.float32) 
         
         offset = np.array(
-            [[2, 0, -1, 0], [0, -2, 1, 0], [0, 0, 1, 0], [0, 0, 0, 1]],  # Flip ys to match habitat
+            [[2, 0, -1, 0], [0, -2, 1, 0], [0, 0, -1, 0], [0, 0, 0, 1]],  # Flip ys to match habitat
             dtype=np.float32,
         )  # Make z negative to match habitat (which assumes a negative z)
 
